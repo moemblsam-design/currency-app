@@ -3,201 +3,409 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>محول العملات - SAR Converter</title>
-    <script src="https://cdn.tailwindcss.com"></script>
+    <title>مُحوّل العملات | Currency Converter</title>
     <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
     <style>
-        body {
+        :root {
+            --primary: #2563eb;
+            --primary-dark: #1d4ed8;
+            --bg-gradient: linear-gradient(135deg, #f0f9ff 0%, #e0f2fe 100%);
+            --card-bg: #ffffff;
+            --text-main: #0f172a;
+            --text-muted: #64748b;
+            --border: #e2e8f0;
+            --accent: #10b981;
+        }
+
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
             font-family: 'Tajawal', sans-serif;
-            background-color: #f3f4f6;
+            -webkit-tap-highlight-color: transparent;
+        }
+
+        body {
+            background: var(--bg-gradient);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 16px;
+            color: var(--text-main);
+        }
+
+        .container {
+            width: 100%;
+            max-width: 480px;
+            background: var(--card-bg);
+            border-radius: 24px;
+            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 8px 10px -6px rgba(0, 0, 0, 0.01);
+            padding: 24px;
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+            border: 1px solid rgba(255, 255, 255, 0.8);
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding-bottom: 12px;
+            border-bottom: 1px solid var(--border);
+        }
+
+        .title-group {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .icon-box {
+            width: 40px;
+            height: 40px;
+            background: #eff6ff;
+            color: var(--primary);
+            border-radius: 12px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 20px;
+        }
+
+        h1 {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .lang-btn {
+            background: #f1f5f9;
+            border: 1px solid var(--border);
+            padding: 6px 14px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            cursor: pointer;
+            color: var(--primary);
+            transition: all 0.2s ease;
+        }
+
+        .lang-btn:active {
+            transform: scale(0.95);
+        }
+
+        .tabs {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            background: #f1f5f9;
+            padding: 4px;
+            border-radius: 14px;
+            gap: 4px;
+        }
+
+        .tab-btn {
+            border: none;
+            background: transparent;
+            padding: 10px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            color: var(--text-muted);
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+        }
+
+        .tab-btn.active {
+            background: var(--card-bg);
+            color: var(--primary);
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+
+        .input-card {
+            background: #f8fafc;
+            border: 1px solid var(--border);
+            border-radius: 16px;
+            padding: 16px;
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+
+        .label {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            font-weight: 500;
+        }
+
+        .input-row {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        input {
+            width: 100%;
+            border: none;
+            background: transparent;
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            outline: none;
+        }
+
+        .currency-badge {
+            background: #e0f2fe;
+            color: var(--primary-dark);
+            font-weight: 700;
+            padding: 6px 12px;
+            border-radius: 10px;
+            font-size: 0.9rem;
+            white-space: nowrap;
+        }
+
+        .results-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+
+        .result-item {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 14px 16px;
+            background: #ffffff;
+            border: 1px solid var(--border);
+            border-radius: 14px;
+            transition: transform 0.2s;
+        }
+
+        .result-item:hover {
+            transform: translateY(-1px);
+        }
+
+        .currency-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .flag-box {
+            font-size: 1.5rem;
+            width: 36px;
+            height: 36px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            background: #f8fafc;
+            border-radius: 10px;
+        }
+
+        .currency-name {
+            font-weight: 700;
+            font-size: 0.95rem;
+        }
+
+        .currency-code {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .result-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--primary);
+            text-align: left;
+        }
+
+        .footer {
+            text-align: center;
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 4px;
         }
     </style>
 </head>
-<body class="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+<body>
 
-    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+    <div class="container">
         <!-- Header -->
-        <div class="bg-emerald-600 p-6 text-white text-center relative">
-            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
-                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
-                </svg>
+        <div class="header">
+            <div class="title-group">
+                <div class="icon-box">💱</div>
+                <h1 id="app-title">تحويل العملات</h1>
             </div>
-            <h1 class="text-xl font-bold">محول العملات والريال السعودي</h1>
-            <p class="text-emerald-100 text-xs mt-1">حساب دقيق لأسعار الصرف بناءً على الجدول مع تقدير المبلغ النهائي</p>
+            <button class="lang-btn" id="lang-btn" onclick="toggleLanguage()">English</button>
         </div>
 
-        <!-- Body Content -->
-        <div class="p-6 space-y-5">
-            <!-- Mode Selector -->
-            <div class="flex rounded-xl bg-slate-100 p-1">
-                <button id="btnFromSar" onclick="setMode('from_sar')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">
-                    من ريال (SAR) إلى عملة
-                </button>
-                <button id="btnToSar" onclick="setMode('to_sar')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
-                    من عملة إلى ريال (SAR)
-                </button>
-            </div>
+        <!-- Mode Selector -->
+        <div class="tabs">
+            <button class="tab-btn active" id="tab-from-sar" onclick="setDirection('from-sar')">من ريال (SAR) ⬅️</button>
+            <button class="tab-btn" id="tab-to-sar" onclick="setDirection('to-sar')">إلى ريال (SAR) ➡️</button>
+        </div>
 
-            <!-- Currency Select -->
-            <div>
-                <label class="block text-xs font-bold text-slate-600 mb-2">اختر العملة المقابلة</label>
-                <select id="currencySelect" onchange="calculate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
-                    <option value="USD">USD - دولار أمريكي</option>
-                    <option value="THB">THB - باث تايلاندي</option>
-                    <option value="VND">VND - دونغ فيتنامي</option>
-                    <option value="IDR">IDR - روبية إندونيسية</option>
-                </select>
-            </div>
-
-            <!-- Input Amount -->
-            <div>
-                <label id="inputLabel" class="block text-xs font-bold text-slate-600 mb-2">المبلغ بالريال السعودي (SAR)</label>
-                <div class="relative">
-                    <input type="number" id="amountInput" value="100" oninput="calculate()" placeholder="أدخل المبلغ" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all pl-16">
-                    <span id="inputCurrencyTag" class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold bg-slate-200 px-2.5 py-1 rounded-lg text-slate-600">SAR</span>
+        <!-- Single Mode View -->
+        <div id="from-sar-section">
+            <div class="input-card">
+                <span class="label" id="label-from-sar">المبلغ بالريال السعودي:</span>
+                <div class="input-row">
+                    <input type="number" id="sar-input" value="100" min="0" oninput="calculateFromSAR()">
+                    <span class="currency-badge">SAR 🇸🇦</span>
                 </div>
-            </div>
-
-            <!-- Exchange Details Box -->
-            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
-                <div class="flex justify-between items-center text-xs text-slate-500 pb-2 border-b border-slate-200/60">
-                    <span>سعر الصرف المعتمد:</span>
-                    <span id="rateDisplay" class="font-bold text-slate-700">1 SAR = 0.27 USD</span>
-                </div>
-
-                <!-- Main Conversion Result -->
-                <div class="text-center py-2">
-                    <span class="block text-xs text-slate-400 font-medium mb-1" id="resultTitle">التحويل الأساسي</span>
-                    <div class="text-2xl font-black text-slate-800" id="baseResult">0.00</div>
-                </div>
-
-                <!-- Estimated Margin Result (as in Excel) -->
-                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-center">
-                    <span class="block text-xs text-emerald-800 font-bold mb-1">المبلغ التقديري بالخصم/المعدل (كما بملف الإكسل)</span>
-                    <div class="text-xl font-black text-emerald-700" id="marginResult">0.00</div>
-                </div>
-            </div>
-
-            <!-- Exchange Rates Table Reference -->
-            <div class="pt-2">
-                <details class="group">
-                    <summary class="flex justify-between items-center text-xs font-bold text-slate-500 cursor-pointer list-none py-1">
-                        <span>جدول أسعار الصرف والمعدلات (Excel)</span>
-                        <span class="transition group-open:rotate-180">
-                            <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><polyline points="6 9 12 15 18 9"></polyline></svg>
-                        </span>
-                    </summary>
-                    <div class="mt-3 overflow-x-auto rounded-xl border border-slate-100">
-                        <table class="w-full text-xs text-right text-slate-600">
-                            <thead class="bg-slate-100 text-slate-700 font-bold">
-                                <tr>
-                                    <th class="p-2">العملة</th>
-                                    <th class="p-2">السعر مقابل SAR</th>
-                                    <th class="p-2">معامل الخصم/التقدير</th>
-                                </tr>
-                            </thead>
-                            <tbody class="divide-y divide-slate-100 bg-white" id="ratesTableBody">
-                            </tbody>
-                        </table>
-                    </div>
-                </details>
             </div>
         </div>
 
-        <!-- Footer -->
-        <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-center">
-            <p class="text-[11px] text-slate-400">جاهز للتثبيت كـ App على الجوال عبر GitHub Pages</p>
+        <div id="to-sar-section" style="display: none;">
+            <div class="input-card">
+                <span class="label" id="label-select-currency">اختر العملة وأدخل المبلغ:</span>
+                <div class="input-row">
+                    <input type="number" id="foreign-input" value="1000" min="0" oninput="calculateToSAR()">
+                    <select id="foreign-currency-select" onchange="calculateToSAR()" style="border:none; background: #e0f2fe; color: var(--primary-dark); font-weight:700; padding:6px; border-radius:10px; outline:none; font-family:'Tajawal';">
+                        <option value="USD">USD 🇺🇸</option>
+                        <option value="THB">THB 🇹🇭</option>
+                        <option value="VND">VND 🇻🇳</option>
+                        <option value="IDR">IDR 🇮🇩</option>
+                    </select>
+                </div>
+            </div>
+        </div>
+
+        <!-- Output Results -->
+        <div class="results-list" id="results-container">
+            <!-- Dynamic Content -->
+        </div>
+
+        <div class="footer" id="footer-text">
+            أسعار الصرف محددة بحسب جدول البيانات الخاص بك
         </div>
     </div>
 
     <script>
-        // Data structure based on Book3.xlsx
-        const ratesData = {
-            USD: { name: "دولار أمريكي", rateFromSar: 0.266, rateToSar: 3.75, marginFactor: 0.98 },
-            THB: { name: "باث تايلاندي", rateFromSar: 9.25, rateToSar: 0.108, marginFactor: 0.97 },
-            VND: { name: "دونغ فيتنامي", rateFromSar: 6600, rateToSar: 0.00015, marginFactor: 0.96 },
-            IDR: { name: "روبية إندونيسية", rateFromSar: 4250, rateToSar: 0.000235, marginFactor: 0.96 }
+        let currentLang = 'ar';
+        let currentDirection = 'from-sar';
+
+        // Rates defined from Excel Sheet
+        const rates = {
+            fromSAR: {
+                USD: { rate: 0.2667, flag: '🇺🇸', nameAr: 'دولار أمريكي', nameEn: 'US Dollar' },
+                THB: { rate: 8.5, flag: '🇹🇭', nameAr: 'باث تايلاندي', nameEn: 'Thai Baht' },
+                VND: { rate: 7000, flag: '🇻🇳', nameAr: 'دونغ فيتنامي', nameEn: 'Vietnamese Dong' },
+                IDR: { rate: 4000, flag: '🇮🇩', nameAr: 'روبية إندونيسية', nameEn: 'Indonesian Rupiah' }
+            },
+            toSAR: {
+                USD: { divisor: 3.75, flag: '🇺🇸', nameAr: 'دولار أمريكي', nameEn: 'US Dollar' },
+                THB: { divisor: 8.5, flag: '🇹🇭', nameAr: 'باث تايلاندي', nameEn: 'Thai Baht' },
+                VND: { divisor: 7000, flag: '🇻🇳', nameAr: 'دونغ فيتنامي', nameEn: 'Vietnamese Dong' },
+                IDR: { divisor: 4000, flag: '🇮🇩', nameAr: 'روبية إندونيسية', nameEn: 'Indonesian Rupiah' }
+            }
         };
 
-        let currentMode = 'from_sar'; // 'from_sar' or 'to_sar'
-
-        function setMode(mode) {
-            currentMode = mode;
-            const btnFrom = document.getElementById('btnFromSar');
-            const btnTo = document.getElementById('btnToSar');
-            const inputLabel = document.getElementById('inputLabel');
-            const inputCurrencyTag = document.getElementById('inputCurrencyTag');
-            const curr = document.getElementById('currencySelect').value;
-
-            if (mode === 'from_sar') {
-                btnFrom.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
-                btnTo.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
-                inputLabel.innerText = "المبلغ بالريال السعودي (SAR)";
-                inputCurrencyTag.innerText = "SAR";
-            } else {
-                btnTo.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
-                btnFrom.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
-                inputLabel.innerText = `المبلغ بـ (${curr})`;
-                inputCurrencyTag.innerText = curr;
+        const translations = {
+            ar: {
+                title: "تحويل العملات",
+                langBtn: "English",
+                fromSarTab: "من ريال (SAR) ⬅️",
+                toSarTab: "إلى ريال (SAR) ➡️",
+                labelFromSar: "المبلغ بالريال السعودي:",
+                labelSelectCurrency: "أدخل المبلغ واختر العملة:",
+                footerText: "أسعار الصرف محددة بحسب جدول البيانات الخاص بك",
+                resultSarLabel: "النتيجة بالريال السعودي"
+            },
+            en: {
+                title: "Currency Converter",
+                langBtn: "عربي",
+                fromSarTab: "From SAR ⬅️",
+                toSarTab: "To SAR ➡️",
+                labelFromSar: "Amount in Saudi Riyal (SAR):",
+                labelSelectCurrency: "Enter Amount & Select Currency:",
+                footerText: "Exchange rates based on your spreadsheet data",
+                resultSarLabel: "Result in Saudi Riyal (SAR)"
             }
-            calculate();
+        };
+
+        function setDirection(dir) {
+            currentDirection = dir;
+            document.getElementById('tab-from-sar').classList.toggle('active', dir === 'from-sar');
+            document.getElementById('tab-to-sar').classList.toggle('active', dir === 'to-sar');
+
+            document.getElementById('from-sar-section').style.display = dir === 'from-sar' ? 'block' : 'none';
+            document.getElementById('to-sar-section').style.display = dir === 'to-sar' ? 'block' : 'none';
+
+            if (dir === 'from-sar') {
+                calculateFromSAR();
+            } else {
+                calculateToSAR();
+            }
         }
 
-        function calculate() {
-            const curr = document.getElementById('currencySelect').value;
-            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
-            const data = ratesData[curr];
+        function calculateFromSAR() {
+            const sarVal = parseFloat(document.getElementById('sar-input').value) || 0;
+            const container = document.getElementById('results-container');
+            container.innerHTML = '';
 
-            const inputCurrencyTag = document.getElementById('inputCurrencyTag');
-            const inputLabel = document.getElementById('inputLabel');
-            if (currentMode === 'to_sar') {
-                inputCurrencyTag.innerText = curr;
-                inputLabel.innerText = `المبلغ بـ (${curr})`;
-            }
+            Object.keys(rates.fromSAR).forEach(code => {
+                const cur = rates.fromSAR[code];
+                const converted = (sarVal * cur.rate).toLocaleString(undefined, { maximumFractionDigits: 2 });
 
-            let baseResult = 0;
-            let marginResult = 0;
-            let rateText = "";
-
-            if (currentMode === 'from_sar') {
-                baseResult = amount * data.rateFromSar;
-                marginResult = baseResult * data.marginFactor;
-                rateText = `1 SAR = ${data.rateFromSar} ${curr}`;
-                document.getElementById('resultTitle').innerText = `النتيجة بالـ (${curr})`;
-                document.getElementById('baseResult').innerText = `${baseResult.toLocaleString('en-US', {maximumFractionDigits: 2})} ${curr}`;
-                document.getElementById('marginResult').innerText = `${marginResult.toLocaleString('en-US', {maximumFractionDigits: 2})} ${curr}`;
-            } else {
-                baseResult = amount * data.rateToSar;
-                marginResult = baseResult * data.marginFactor;
-                rateText = `1 ${curr} = ${data.rateToSar} SAR`;
-                document.getElementById('resultTitle').innerText = `النتيجة بالـ (SAR)`;
-                document.getElementById('baseResult').innerText = `${baseResult.toLocaleString('en-US', {maximumFractionDigits: 2})} SAR`;
-                document.getElementById('marginResult').innerText = `${marginResult.toLocaleString('en-US', {maximumFractionDigits: 2})} SAR`;
-            }
-
-            document.getElementById('rateDisplay').innerText = rateText;
-        }
-
-        function populateRatesTable() {
-            const tbody = document.getElementById('ratesTableBody');
-            tbody.innerHTML = '';
-            for (const [code, item] of Object.entries(ratesData)) {
-                const tr = document.createElement('tr');
-                tr.innerHTML = `
-                    <td class="p-2 font-bold">${code} (${item.name})</td>
-                    <td class="p-2">${item.rateFromSar}</td>
-                    <td class="p-2">${(item.marginFactor * 100).toFixed(0)}%</td>
+                const card = document.createElement('div');
+                card.className = 'result-item';
+                card.innerHTML = `
+                    <div class="currency-info">
+                        <div class="flag-box">${cur.flag}</div>
+                        <div>
+                            <div class="currency-name">${currentLang === 'ar' ? cur.nameAr : cur.nameEn}</div>
+                            <div class="currency-code">${code}</div>
+                        </div>
+                    </div>
+                    <div class="result-value">${converted} <span style="font-size:0.8rem">${code}</span></div>
                 `;
-                tbody.appendChild(tr);
-            }
+                container.appendChild(card);
+            });
         }
 
-        // Initialize on load
-        window.onload = function() {
-            populateRatesTable();
-            calculate();
-        };
+        function calculateToSAR() {
+            const val = parseFloat(document.getElementById('foreign-input').value) || 0;
+            const code = document.getElementById('foreign-currency-select').value;
+            const cur = rates.toSAR[code];
+            const converted = (val / cur.divisor).toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+            const container = document.getElementById('results-container');
+            container.innerHTML = `
+                <div class="result-item" style="border-color: var(--primary); background: #eff6ff;">
+                    <div class="currency-info">
+                        <div class="flag-box">🇸🇦</div>
+                        <div>
+                            <div class="currency-name">${translations[currentLang].resultSarLabel}</div>
+                            <div class="currency-code">SAR</div>
+                        </div>
+                    </div>
+                    <div class="result-value">${converted} <span style="font-size:0.8rem">SAR</span></div>
+                </div>
+            `;
+        }
+
+        function toggleLanguage() {
+            currentLang = currentLang === 'ar' ? 'en' : 'ar';
+            const html = document.documentElement;
+            html.lang = currentLang;
+            html.dir = currentLang === 'ar' ? 'rtl' : 'ltr';
+
+            const t = translations[currentLang];
+            document.getElementById('app-title').innerText = t.title;
+            document.getElementById('lang-btn').innerText = t.langBtn;
+            document.getElementById('tab-from-sar').innerText = t.fromSarTab;
+            document.getElementById('tab-to-sar').innerText = t.toSarTab;
+            document.getElementById('label-from-sar').innerText = t.labelFromSar;
+            document.getElementById('label-select-currency').innerText = t.labelSelectCurrency;
+            document.getElementById('footer-text').innerText = t.footerText;
+
+            setDirection(currentDirection);
+        }
+
+        // Initial Calculation
+        calculateFromSAR();
     </script>
 </body>
 </html>
