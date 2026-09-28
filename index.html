@@ -286,7 +286,6 @@
         let currentLang = 'ar';
         let currentDirection = 'from-sar';
 
-        // Rates defined from Excel Sheet
         const rates = {
             fromSAR: {
                 USD: { rate: 0.2667, flag: '🇺🇸', nameAr: 'دولار أمريكي', nameEn: 'US Dollar' },
@@ -295,10 +294,10 @@
                 IDR: { rate: 4000, flag: '🇮🇩', nameAr: 'روبية إندونيسية', nameEn: 'Indonesian Rupiah' }
             },
             toSAR: {
-                USD: { divisor: 3.75, flag: '🇺🇸', nameAr: 'دولار أمريكي', nameEn: 'US Dollar' },
-                THB: { divisor: 8.5, flag: '🇹🇭', nameAr: 'باث تايلاندي', nameEn: 'Thai Baht' },
-                VND: { divisor: 7000, flag: '🇻🇳', nameAr: 'دونغ فيتنامي', nameEn: 'Vietnamese Dong' },
-                IDR: { divisor: 4000, flag: '🇮🇩', nameAr: 'روبية إندونيسية', nameEn: 'Indonesian Rupiah' }
+                USD: { type: 'multiply', factor: 3.75, flag: '🇺🇸', nameAr: 'دولار أمريكي', nameEn: 'US Dollar' },
+                THB: { type: 'divide', factor: 8.5, flag: '🇹🇭', nameAr: 'باث تايلاندي', nameEn: 'Thai Baht' },
+                VND: { type: 'divide', factor: 7000, flag: '🇻🇳', nameAr: 'دونغ فيتنامي', nameEn: 'Vietnamese Dong' },
+                IDR: { type: 'divide', factor: 4000, flag: '🇮🇩', nameAr: 'روبية إندونيسية', nameEn: 'Indonesian Rupiah' }
             }
         };
 
@@ -369,7 +368,16 @@
             const val = parseFloat(document.getElementById('foreign-input').value) || 0;
             const code = document.getElementById('foreign-currency-select').value;
             const cur = rates.toSAR[code];
-            const converted = (val / cur.divisor).toLocaleString(undefined, { maximumFractionDigits: 2 });
+
+            // Correct calculation: multiply for USD, divide for others
+            let resultVal = 0;
+            if (cur.type === 'multiply') {
+                resultVal = val * cur.factor;
+            } else {
+                resultVal = val / cur.factor;
+            }
+
+            const converted = resultVal.toLocaleString(undefined, { maximumFractionDigits: 2 });
 
             const container = document.getElementById('results-container');
             container.innerHTML = `
