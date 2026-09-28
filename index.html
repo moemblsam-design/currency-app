@@ -1,0 +1,203 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>محول العملات - SAR Converter</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://fonts.googleapis.com/css2?family=Tajawal:wght@400;500;700&display=swap" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Tajawal', sans-serif;
+            background-color: #f3f4f6;
+        }
+    </style>
+</head>
+<body class="min-h-screen flex items-center justify-center p-4 bg-slate-50">
+
+    <div class="w-full max-w-md bg-white rounded-3xl shadow-xl overflow-hidden border border-slate-100">
+        <!-- Header -->
+        <div class="bg-emerald-600 p-6 text-white text-center relative">
+            <div class="w-12 h-12 bg-white/10 rounded-2xl flex items-center justify-center mx-auto mb-3 backdrop-blur-sm">
+                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7h12m0 0l-4-4m4 4l-4 4m0 6H4m0 0l4 4m-4-4l4-4" />
+                </svg>
+            </div>
+            <h1 class="text-xl font-bold">محول العملات والريال السعودي</h1>
+            <p class="text-emerald-100 text-xs mt-1">حساب دقيق لأسعار الصرف بناءً على الجدول مع تقدير المبلغ النهائي</p>
+        </div>
+
+        <!-- Body Content -->
+        <div class="p-6 space-y-5">
+            <!-- Mode Selector -->
+            <div class="flex rounded-xl bg-slate-100 p-1">
+                <button id="btnFromSar" onclick="setMode('from_sar')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm">
+                    من ريال (SAR) إلى عملة
+                </button>
+                <button id="btnToSar" onclick="setMode('to_sar')" class="flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900">
+                    من عملة إلى ريال (SAR)
+                </button>
+            </div>
+
+            <!-- Currency Select -->
+            <div>
+                <label class="block text-xs font-bold text-slate-600 mb-2">اختر العملة المقابلة</label>
+                <select id="currencySelect" onchange="calculate()" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 font-medium focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all">
+                    <option value="USD">USD - دولار أمريكي</option>
+                    <option value="THB">THB - باث تايلاندي</option>
+                    <option value="VND">VND - دونغ فيتنامي</option>
+                    <option value="IDR">IDR - روبية إندونيسية</option>
+                </select>
+            </div>
+
+            <!-- Input Amount -->
+            <div>
+                <label id="inputLabel" class="block text-xs font-bold text-slate-600 mb-2">المبلغ بالريال السعودي (SAR)</label>
+                <div class="relative">
+                    <input type="number" id="amountInput" value="100" oninput="calculate()" placeholder="أدخل المبلغ" class="w-full bg-slate-50 border border-slate-200 rounded-xl p-3 text-slate-800 font-bold text-lg focus:ring-2 focus:ring-emerald-500 focus:border-emerald-500 outline-none transition-all pl-16">
+                    <span id="inputCurrencyTag" class="absolute left-3 top-1/2 -translate-y-1/2 text-xs font-bold bg-slate-200 px-2.5 py-1 rounded-lg text-slate-600">SAR</span>
+                </div>
+            </div>
+
+            <!-- Exchange Details Box -->
+            <div class="bg-slate-50 rounded-2xl p-4 border border-slate-100 space-y-3">
+                <div class="flex justify-between items-center text-xs text-slate-500 pb-2 border-b border-slate-200/60">
+                    <span>سعر الصرف المعتمد:</span>
+                    <span id="rateDisplay" class="font-bold text-slate-700">1 SAR = 0.27 USD</span>
+                </div>
+
+                <!-- Main Conversion Result -->
+                <div class="text-center py-2">
+                    <span class="block text-xs text-slate-400 font-medium mb-1" id="resultTitle">التحويل الأساسي</span>
+                    <div class="text-2xl font-black text-slate-800" id="baseResult">0.00</div>
+                </div>
+
+                <!-- Estimated Margin Result (as in Excel) -->
+                <div class="bg-emerald-50 border border-emerald-100 rounded-xl p-3 text-center">
+                    <span class="block text-xs text-emerald-800 font-bold mb-1">المبلغ التقديري بالخصم/المعدل (كما بملف الإكسل)</span>
+                    <div class="text-xl font-black text-emerald-700" id="marginResult">0.00</div>
+                </div>
+            </div>
+
+            <!-- Exchange Rates Table Reference -->
+            <div class="pt-2">
+                <details class="group">
+                    <summary class="flex justify-between items-center text-xs font-bold text-slate-500 cursor-pointer list-none py-1">
+                        <span>جدول أسعار الصرف والمعدلات (Excel)</span>
+                        <span class="transition group-open:rotate-180">
+                            <svg fill="none" height="16" stroke="currentColor" stroke-linecap="round" stroke-linejoin="round" stroke-width="2" viewBox="0 0 24 24" width="16"><polyline points="6 9 12 15 18 9"></polyline></svg>
+                        </span>
+                    </summary>
+                    <div class="mt-3 overflow-x-auto rounded-xl border border-slate-100">
+                        <table class="w-full text-xs text-right text-slate-600">
+                            <thead class="bg-slate-100 text-slate-700 font-bold">
+                                <tr>
+                                    <th class="p-2">العملة</th>
+                                    <th class="p-2">السعر مقابل SAR</th>
+                                    <th class="p-2">معامل الخصم/التقدير</th>
+                                </tr>
+                            </thead>
+                            <tbody class="divide-y divide-slate-100 bg-white" id="ratesTableBody">
+                            </tbody>
+                        </table>
+                    </div>
+                </details>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <div class="bg-slate-50 px-6 py-4 border-t border-slate-100 text-center">
+            <p class="text-[11px] text-slate-400">جاهز للتثبيت كـ App على الجوال عبر GitHub Pages</p>
+        </div>
+    </div>
+
+    <script>
+        // Data structure based on Book3.xlsx
+        const ratesData = {
+            USD: { name: "دولار أمريكي", rateFromSar: 0.266, rateToSar: 3.75, marginFactor: 0.98 },
+            THB: { name: "باث تايلاندي", rateFromSar: 9.25, rateToSar: 0.108, marginFactor: 0.97 },
+            VND: { name: "دونغ فيتنامي", rateFromSar: 6600, rateToSar: 0.00015, marginFactor: 0.96 },
+            IDR: { name: "روبية إندونيسية", rateFromSar: 4250, rateToSar: 0.000235, marginFactor: 0.96 }
+        };
+
+        let currentMode = 'from_sar'; // 'from_sar' or 'to_sar'
+
+        function setMode(mode) {
+            currentMode = mode;
+            const btnFrom = document.getElementById('btnFromSar');
+            const btnTo = document.getElementById('btnToSar');
+            const inputLabel = document.getElementById('inputLabel');
+            const inputCurrencyTag = document.getElementById('inputCurrencyTag');
+            const curr = document.getElementById('currencySelect').value;
+
+            if (mode === 'from_sar') {
+                btnFrom.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+                btnTo.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                inputLabel.innerText = "المبلغ بالريال السعودي (SAR)";
+                inputCurrencyTag.innerText = "SAR";
+            } else {
+                btnTo.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 bg-white text-emerald-700 shadow-sm";
+                btnFrom.className = "flex-1 py-2 text-sm font-semibold rounded-lg transition-all duration-200 text-slate-600 hover:text-slate-900";
+                inputLabel.innerText = `المبلغ بـ (${curr})`;
+                inputCurrencyTag.innerText = curr;
+            }
+            calculate();
+        }
+
+        function calculate() {
+            const curr = document.getElementById('currencySelect').value;
+            const amount = parseFloat(document.getElementById('amountInput').value) || 0;
+            const data = ratesData[curr];
+
+            const inputCurrencyTag = document.getElementById('inputCurrencyTag');
+            const inputLabel = document.getElementById('inputLabel');
+            if (currentMode === 'to_sar') {
+                inputCurrencyTag.innerText = curr;
+                inputLabel.innerText = `المبلغ بـ (${curr})`;
+            }
+
+            let baseResult = 0;
+            let marginResult = 0;
+            let rateText = "";
+
+            if (currentMode === 'from_sar') {
+                baseResult = amount * data.rateFromSar;
+                marginResult = baseResult * data.marginFactor;
+                rateText = `1 SAR = ${data.rateFromSar} ${curr}`;
+                document.getElementById('resultTitle').innerText = `النتيجة بالـ (${curr})`;
+                document.getElementById('baseResult').innerText = `${baseResult.toLocaleString('en-US', {maximumFractionDigits: 2})} ${curr}`;
+                document.getElementById('marginResult').innerText = `${marginResult.toLocaleString('en-US', {maximumFractionDigits: 2})} ${curr}`;
+            } else {
+                baseResult = amount * data.rateToSar;
+                marginResult = baseResult * data.marginFactor;
+                rateText = `1 ${curr} = ${data.rateToSar} SAR`;
+                document.getElementById('resultTitle').innerText = `النتيجة بالـ (SAR)`;
+                document.getElementById('baseResult').innerText = `${baseResult.toLocaleString('en-US', {maximumFractionDigits: 2})} SAR`;
+                document.getElementById('marginResult').innerText = `${marginResult.toLocaleString('en-US', {maximumFractionDigits: 2})} SAR`;
+            }
+
+            document.getElementById('rateDisplay').innerText = rateText;
+        }
+
+        function populateRatesTable() {
+            const tbody = document.getElementById('ratesTableBody');
+            tbody.innerHTML = '';
+            for (const [code, item] of Object.entries(ratesData)) {
+                const tr = document.createElement('tr');
+                tr.innerHTML = `
+                    <td class="p-2 font-bold">${code} (${item.name})</td>
+                    <td class="p-2">${item.rateFromSar}</td>
+                    <td class="p-2">${(item.marginFactor * 100).toFixed(0)}%</td>
+                `;
+                tbody.appendChild(tr);
+            }
+        }
+
+        // Initialize on load
+        window.onload = function() {
+            populateRatesTable();
+            calculate();
+        };
+    </script>
+</body>
+</html>
